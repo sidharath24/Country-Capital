@@ -12,17 +12,31 @@ namespace Country_App
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
+        Spinner CountrySp;
+        EditText CapitalEt;
+        ImageView CountryImage;
+        String[] Cap = { "New Delhi", "Ottawa", "Madrid", "Paris", "Brasília", "Beijing", "London" };
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+            CountrySp = (Spinner)FindViewById(Resource.Id.SpCountryName);
+            CapitalEt = (EditText)FindViewById(Resource.Id.EtCapitalName);
+            CountryImage = (ImageView)FindViewById(Resource.Id.IvCountry);
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
+            var carNamesAdapter = ArrayAdapter.CreateFromResource(this, Resource.Array.CountryNames, Android.Resource.Layout.SimpleSpinnerItem);
+            CountrySp.Adapter = carNamesAdapter;
 
-            FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-            fab.Click += FabOnClick;
+            CountrySp.ItemSelected += delegate
+            {
+                long i = CountrySp.SelectedItemId;
+                CapitalEt.Text = Cap[i].ToString();
+                Toast.MakeText(this, "The Selected Country is : " + CountrySp.SelectedItem, ToastLength.Long).Show();
+                string imgName = "img" + i;
+                int imgId = this.Resources.GetIdentifier(imgName, "mipmap", this.PackageName);
+                CountryImage.SetImageResource(imgId);
+            };
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
